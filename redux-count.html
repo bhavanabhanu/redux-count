@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+
+    </title>
+</head>
+
+<body>
+    <div id="root">
+
+    </div>
+
+    <!-- https://unpkg.com/react@16.7.0/umd/react.development.js -->
+    <script src="js/react.development.js"></script>
+    <!-- https://unpkg.com/react-dom@16.7.0/umd/react-dom.development.js -->
+    <script src="js/react-dom.development.js"></script>
+    <!-- https://unpkg.com/babel-standalone@6.26.0/babel.js -->
+    <script src="js/babel.js"></script>
+    <script src="https://unpkg.com/redux@4.0.1/dist/redux.js"></script>
+    <script type="text/babel">
+        const rootHandle = document.getElementById('root')
+
+        const { createStore } = Redux
+        const countReducer = (state = { count: 0}, action) => {
+            switch(action.type) {
+                case 'INCREMENT' : {
+                    return {
+                        count: state.count + 1
+                    }
+                } 
+                case 'DECREMENT' : {
+                    return {
+                        count: state.count - 1
+                    }
+                }
+                case 'RESET' : {
+                    return {
+                        count: 0
+                    }
+                }
+                case 'INCREMENT_BY' : {
+                    return {
+                        count: state.count + action.payload
+                    }
+                }
+                default: 
+                    return {...state}
+            }
+        }
+
+    const store = createStore(countReducer)
+    store.subscribe(() => {
+        ReactDOM.render(<div> <Counter /> </div> , rootHandle)
+        console.log(store.getState())
+    }) 
+
+    // action creator || action generator 
+    const increment = () => {
+        // action ie {}
+        return { type: 'INCREMENT' }
+    }
+
+    const decrement = () => {
+        return { type: 'DECREMENT'}
+    }
+
+    const reset = () => {
+        return { type: 'RESET'}
+    }
+
+    const incrementBy = (value) => {
+        return { type: 'INCREMENT_BY', payload: value}
+    }
+
+        class Counter extends React.Component {
+        constructor() {
+            super()
+           
+        }
+
+        render() {
+            return (
+                <div>
+                    <h1> { store.getState().count } </h1> 
+                    counter component calling component 1
+                    <Component1  />
+                </div> 
+            )
+        }
+    }
+
+    const Component1 = (props) => {
+        return (
+            <div> 
+                component 1
+                component1 calling component 2
+                <Component2  />
+            </div> 
+        )
+    }
+
+    const Component2 = (props) => {
+        return (
+            <div> 
+                component 2
+                component2 calling component 3
+                <Component3 />
+            </div> 
+        )
+    }
+
+    const Component3 = (props) => {
+        return (
+            <div>
+                component 3
+                <button onClick={() => {
+                    store.dispatch(increment())
+                }}> up </button> 
+                <button onClick={() => {
+                    store.dispatch(decrement())
+                }} disabled={store.getState().count == 0}> down </button> 
+            </div> 
+        )
+    }
+
+    ReactDOM.render(<div> <Counter /> </div> , rootHandle)
+
+
+</script>
+</body>
+
+</html>
+
